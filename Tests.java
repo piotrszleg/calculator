@@ -7,5 +7,6 @@ class Tests {
         assert(close(new Interpreter("-12").interpret(), -12.0));
         assert(close(new Interpreter("12+10").interpret(), 22.0));
         assert(close(new Interpreter("(12+10)").interpret(), 22.0));
+        assert(close(new Interpreter("2x(12+10)").interpret(), 44.0));
     }
 }

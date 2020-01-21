@@ -23,12 +23,14 @@ class Calculator extends JFrame implements InputReceiver {
     public void receiveInput(String newInput){
         if(newInput.equals("CE")){
             this.input="";
-        } else if(newInput.equals("<-")){
+        } else if(newInput.equals("<")){
             this.input=this.input.substring(0, this.input.length()-1);
         } else if(newInput.equals("=")){
             try {
                 this.input=interpretInput();
             } catch(ParsingException|EvaluationException e) {}
+        } else if(newInput.equals("f(x)")){
+            // open functions panel    
         } else {
             this.input+=newInput;
         }

@@ -8,7 +8,7 @@ class Controls extends Panel {
         button.addActionListener(onClick);
         add(button);
     }
-    String[] buttons={"CE", "<-", ",", "f(x)"};
+    String[] buttons={"CE", "<", ",", "f(x)"};
     public Controls(InputReceiver inputReceiver) {
         super();
         setLayout(new GridLayout(1, buttons.length));

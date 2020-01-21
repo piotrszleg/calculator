@@ -20,6 +20,9 @@ class Interpreter {
     double parseNumber() throws ParsingException{
         boolean valueParsed=false;
         double value=0.0;
+        if(pointer>=text.length()){
+            throw new ParsingException();
+        }
         String parsedText=""+text.charAt(pointer);
         pointer++;
         while(true){
@@ -160,6 +163,9 @@ class Interpreter {
         } else if(text.charAt(pointer)=='-'){
             pointer++;
             return parseIfBinary(-parseNumber());
+        } else if(text.charAt(pointer)=='√'){
+            pointer++;
+            return parseIfBinary(Math.sqrt(parseNumber()));
         } else if(text.charAt(pointer)=='('){
             int begin=pointer;
             for(; pointer<text.length(); pointer++){
