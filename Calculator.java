@@ -5,6 +5,7 @@ import java.awt.event.*;
 class Calculator extends JFrame implements InputReceiver {
     Display display;
     Keyboard keyboard;
+    FunctionsPanel functionsPanel;
     String input="";
 
     String interpretInput() throws ParsingException, EvaluationException {
@@ -30,7 +31,8 @@ class Calculator extends JFrame implements InputReceiver {
                 this.input=interpretInput();
             } catch(ParsingException|EvaluationException e) {}
         } else if(newInput.equals("f(x)")){
-            // open functions panel    
+            keyboard.setVisible(!keyboard.isVisible());
+            functionsPanel.setVisible(!functionsPanel.isVisible());
         } else {
             this.input+=newInput;
         }
@@ -45,6 +47,9 @@ class Calculator extends JFrame implements InputReceiver {
         add(new Controls(this));
         keyboard=new Keyboard(this);
         add(keyboard);
+        functionsPanel=new FunctionsPanel(this);
+        add(functionsPanel);
+        // functionsPanel.setVisible(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(300, 500);
         setVisible(true);
