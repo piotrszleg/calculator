@@ -1,10 +1,11 @@
 class FunctionsPanel extends ButtonsPanel {
+    static final int width=4;
     public FunctionsPanel(InputReceiver inputReceiver) {
-        super(inputReceiver, 5, 4);
+        super(inputReceiver, width, width);// height will be changed later
         FunctionsList functionsList=FunctionsList.getInstance();
         int buttonsCount=functionsList.oneArgumentFunctions.size()+functionsList.twoArgumentsFunctions.size()
                         +functionsList.constants.size();
-        setSize(5, (int)Math.ceil((float)buttonsCount/5));
+        setLayoutSize(width, (int)Math.ceil((float)buttonsCount/width));
         for(String name : functionsList.oneArgumentFunctions.keySet()){
             addButton(name);
         }

@@ -18,12 +18,12 @@ class ButtonsPanel extends Panel {
         });
         add(button);
     }
-    public void setSize(int width, int height){
+    public void setLayoutSize(int width, int height){
         setLayout(new GridLayout(height, width));
     }
     public ButtonsPanel(InputReceiver inputReceiver, int width, int height) {
         super();
         this.inputReceiver=inputReceiver;
-        setSize(width, height);
+        setLayoutSize(width, height);
     }
 }

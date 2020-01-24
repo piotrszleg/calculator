@@ -9,7 +9,7 @@ class Calculator extends JFrame implements InputReceiver {
     String input="";
 
     String interpretInput() throws ParsingException, EvaluationException {
-        return String.valueOf(new Interpreter(this.input).interpret());
+        return String.format("%.2f", new Interpreter(this.input).interpret());
     }
 
     void updateDisplay(){
@@ -29,7 +29,9 @@ class Calculator extends JFrame implements InputReceiver {
         } else if(newInput.equals("=")){
             try {
                 this.input=interpretInput();
-            } catch(ParsingException|EvaluationException e) {}
+            } catch(ParsingException|EvaluationException e) {
+                this.input="Error";
+            }
         } else if(newInput.equals("f(x)")){
             keyboard.setVisible(!keyboard.isVisible());
             functionsPanel.setVisible(!functionsPanel.isVisible());

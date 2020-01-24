@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 
 class FunctionsListGenerator {
     
-    static final String beggining=String.join(System.lineSeparator(),
+    static final String beginning=String.join(System.lineSeparator(),
     "import java.util.Map;",
     "import java.util.HashMap;",
     "import java.util.function.*;",
@@ -34,7 +34,7 @@ class FunctionsListGenerator {
     static final String outputFile="FunctionsList.java";
     public static void main(String[] args) throws FileNotFoundException, IOException {
         PrintWriter file=new PrintWriter(outputFile);
-        file.println(beggining);
+        file.println(beginning);
         for(String constant : constants.split(" ")){
             file.printf("constants.put(\"%s\", Math.%s);\n", constant, constant);
         }
@@ -44,6 +44,9 @@ class FunctionsListGenerator {
         for(String function : twoArgumentsFunctions.split(" ")){
             file.printf("twoArgumentsFunctions.put(\"%s\", Math::%s);\n", function, function);
         }
+        file.print("oneArgumentFunctions.put(\"ln\", Math::log);\n");
+        String logFunction="(Double a, Double b)->Math.log(a)/Math.log(b)";
+        file.printf("twoArgumentsFunctions.put(\"log\", %s);\n", logFunction);
         file.println(end);
         file.close();
     }

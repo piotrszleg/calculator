@@ -18,6 +18,8 @@ oneArgumentFunctions.put("abs", Math::abs);
 twoArgumentsFunctions.put("pow", Math::pow);
 twoArgumentsFunctions.put("min", Math::min);
 twoArgumentsFunctions.put("max", Math::max);
+oneArgumentFunctions.put("ln", Math::log);
+twoArgumentsFunctions.put("log", (Double a, Double b)->Math.log(a)/Math.log(b));
    }
    static FunctionsList instance;
    public static FunctionsList getInstance(){
