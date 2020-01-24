@@ -8,34 +8,14 @@
             "type": "java",
             "name": "Debug (Launch) - Current File",
             "request": "launch",
-            "args": "-ea",
             "mainClass": "${file}"
         },
         {
             "type": "java",
-            "name": "Debug (Launch)-Main<calculator_fef5067d>",
+            "name": "Debug (Launch) - Tests",
             "request": "launch",
-            "mainClass": "Main",
-            "projectName": "calculator_fef5067d"
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch)-Tests<calculator_fef5067d>",
-            "request": "launch",
-            "mainClass": "Tests",
-            "projectName": "calculator_fef5067d"
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch)-Enums",
-            "request": "launch",
-            "mainClass": "Enums"
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch)-UserInterface",
-            "request": "launch",
-            "mainClass": "UserInterface"
+            "vmArgs": "-enableassertions",
+            "mainClass": "Tests"
         }
     ]
 }

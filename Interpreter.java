@@ -16,13 +16,15 @@ class Interpreter {
     Interpreter(String text){
         this.text=text;
     }
-    
-    double parseNumber() throws ParsingException{
-        boolean valueParsed=false;
-        double value=0.0;
+    void checkBounds() throws ParsingException {
         if(pointer>=text.length()){
             throw new ParsingException();
         }
+    }
+    double parseNumber() throws ParsingException{
+        boolean valueParsed=false;
+        double value=0.0;
+        checkBounds();
         String parsedText=""+text.charAt(pointer);
         pointer++;
         while(true){
@@ -48,6 +50,7 @@ class Interpreter {
     }
     char parseBinaryOperator() throws ParsingException{
         char[] binaryOperators={'-', '+', 'x', '/', '%'};
+        checkBounds();
         char character=text.charAt(pointer);
         for(char operator : binaryOperators){
             if(operator==character){
@@ -70,6 +73,7 @@ class Interpreter {
         return name;
     }
     double parseArgument() throws ParsingException, EvaluationException {
+        checkBounds();
         if(text.charAt(pointer)!='('){
             throw new ParsingException();
         }
@@ -77,7 +81,8 @@ class Interpreter {
         int begin=pointer;
         for(; pointer<text.length(); pointer++){
             if(text.charAt(pointer)==')'){
-                return new Interpreter(text.substring(begin+1, pointer)).interpret();
+                pointer++;
+                return new Interpreter(text.substring(begin, pointer-1)).interpret();
             }
         }
         throw new ParsingException();
@@ -86,7 +91,8 @@ class Interpreter {
         int begin=pointer;
         for(; pointer<text.length(); pointer++){
             if(text.charAt(pointer)==end){
-                return text.substring(begin+1, pointer);
+                pointer++;
+                return text.substring(begin, pointer-1);
             }
         }
         return null;
@@ -94,6 +100,7 @@ class Interpreter {
     double[] parseArguments() throws ParsingException, EvaluationException {
         String[] argumentStrings=new String[2];
         double[] arguments=new double[2];
+        checkBounds();
         if(text.charAt(pointer)!='('){
             throw new ParsingException();
         }
@@ -104,7 +111,7 @@ class Interpreter {
         } else{
             throw new ParsingException();
         }
-        argumentStrings[1]=collectUntil(',');
+        argumentStrings[1]=collectUntil(')');
         if(argumentStrings[1]!=null){
             arguments[1]=new Interpreter(argumentStrings[1]).interpret();
         } else{
@@ -117,10 +124,10 @@ class Interpreter {
         FunctionsList functionsList=FunctionsList.getInstance();
         if(functionsList.constants.containsKey(name)){
             return functionsList.constants.get(name);
-        } else if(functionsList.oneArgumentFunctions.containsKey(name)) {
+        } else if(functionsList.twoArgumentsFunctions.containsKey(name)) {
             double[] arguments=parseArguments();
             return functionsList.twoArgumentsFunctions.get(name).apply(arguments[0], arguments[1]);
-        } else if(functionsList.twoArgumentsFunctions.containsKey(name)) {
+        } else if(functionsList.oneArgumentFunctions.containsKey(name)) {
             return functionsList.oneArgumentFunctions.get(name).apply(parseArgument());
         }
         throw new ParsingException();
@@ -174,6 +181,8 @@ class Interpreter {
                     return parseIfBinary(new Interpreter(text.substring(begin+1, pointer-1)).interpret());
                 }
             }
+        } else if(Character.isAlphabetic(text.charAt(pointer))){
+            return parseIfBinary(parseFunction());
         }
         throw new ParsingException();
     }
