@@ -1,7 +1,3 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-
 class Keyboard extends ButtonsPanel {
     static String[][] buttonLayout={
         {"(", ")", "%", "√"},

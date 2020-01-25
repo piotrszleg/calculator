@@ -1,42 +1,75 @@
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
 
 class Calculator extends JFrame implements InputReceiver {
     Display display;
     Keyboard keyboard;
     FunctionsPanel functionsPanel;
+    boolean panelsSwitch=true;
     String input="";
 
     String interpretInput() throws ParsingException, EvaluationException {
-        return String.format("%.2f", new Interpreter(this.input).interpret());
+        return String.format("%.2f", new Interpreter(input).interpret());
     }
 
     void updateDisplay(){
-        display.setInput(this.input);
+        display.setInput(input);
         try {
             display.setPreview(interpretInput());
         } catch(ParsingException|EvaluationException e){
             display.setPreview("");
         }
     }
+
+    void backspace(){
+        if(input.length()>0){
+            int i;
+            for(i=input.length()-1; i>0; i--){
+                if(!Character.isAlphabetic(input.charAt(i))){
+                    break;
+                }
+            }
+            input=input.substring(0, i);
+        }
+    }
+
+    void equalsSign(){
+        try {
+            input=interpretInput();
+        } catch(ParsingException|EvaluationException e) {
+            input="Error";
+        }
+    }
+
+    void switchButtonPanels(){
+        if(panelsSwitch){
+            add(keyboard);
+            remove(functionsPanel);
+        } else {
+            add(functionsPanel);
+            remove(keyboard);
+        }
+        panelsSwitch=!panelsSwitch;
+        doLayout();
+        revalidate();
+        repaint();
+    }
     
     public void receiveInput(String newInput){
-        if(newInput.equals("CE")){
-            this.input="";
-        } else if(newInput.equals("<")){
-            this.input=this.input.substring(0, this.input.length()-1);
-        } else if(newInput.equals("=")){
-            try {
-                this.input=interpretInput();
-            } catch(ParsingException|EvaluationException e) {
-                this.input="Error";
-            }
-        } else if(newInput.equals("f(x)")){
-            keyboard.setVisible(!keyboard.isVisible());
-            functionsPanel.setVisible(!functionsPanel.isVisible());
-        } else {
-            this.input+=newInput;
+        switch(newInput){
+            case "CE":
+                input="";
+                break;
+            case "<":
+                backspace();
+                break;
+            case "=":
+                equalsSign();
+                break;
+            case "f(x)":
+                switchButtonPanels();
+                break;
+            default:
+                input+=newInput;
         }
         updateDisplay();
     }
@@ -48,12 +81,10 @@ class Calculator extends JFrame implements InputReceiver {
         add(display);
         add(new Controls(this));
         keyboard=new Keyboard(this);
-        add(keyboard);
         functionsPanel=new FunctionsPanel(this);
-        add(functionsPanel);
-        // functionsPanel.setVisible(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(300, 500);
         setVisible(true);
+        switchButtonPanels();
     }
 }
