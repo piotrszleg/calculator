@@ -10,7 +10,7 @@ public class FunctionsList {
     public Map<String, BiFunction<Double, Double, Double>> twoArgumentsFunctions=
            new HashMap<String, BiFunction<Double, Double, Double>>();
     FunctionsList(){
-                constants.put("PI", Math.PI);
+        constants.put("PI", Math.PI);
         constants.put("E", Math.E);
         oneArgumentFunctions.put("sin", Math::sin);
         oneArgumentFunctions.put("cos", Math::cos);
@@ -25,9 +25,9 @@ public class FunctionsList {
         twoArgumentsFunctions.put("pow", Math::pow);
         twoArgumentsFunctions.put("min", Math::min);
         twoArgumentsFunctions.put("max", Math::max);
+
         oneArgumentFunctions.put("ln", Math::log);
         twoArgumentsFunctions.put("log", (Double a, Double b)->Math.log(a)/Math.log(b));
-
     }
     static FunctionsList instance;
     public static FunctionsList getInstance(){

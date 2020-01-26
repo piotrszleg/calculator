@@ -3,7 +3,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 import java.io.IOException;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 
 class FunctionsListGenerator {
@@ -24,7 +23,7 @@ class FunctionsListGenerator {
     private static String readTemplate() throws IOException{
         return readEntireFile(templateFile);
     }
-    public static void main(String[] args) throws FileNotFoundException, IOException {
+    public static void main(String[] args) throws IOException {
         FileWriter file=new FileWriter(outputFile);
         StringBuilder generated=new StringBuilder();
         String indentation="        ";
@@ -37,9 +36,6 @@ class FunctionsListGenerator {
         for(String function : twoArgumentsFunctions.split(" ")){
             generated.append(String.format(indentation+"twoArgumentsFunctions.put(\"%s\", Math::%s);\n", function, function));
         }
-        generated.append(String.format(indentation+"oneArgumentFunctions.put(\"ln\", Math::log);\n"));
-        String logFunction="(Double a, Double b)->Math.log(a)/Math.log(b)";
-        generated.append(String.format(indentation+"twoArgumentsFunctions.put(\"log\", %s);\n", logFunction));
         file.write(String.format(readTemplate(), generated.toString()));
         file.close();
     }

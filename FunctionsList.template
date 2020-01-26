@@ -10,7 +10,9 @@ public class FunctionsList {
     public Map<String, BiFunction<Double, Double, Double>> twoArgumentsFunctions=
            new HashMap<String, BiFunction<Double, Double, Double>>();
     FunctionsList(){
-        %s
+%s
+        oneArgumentFunctions.put("ln", Math::log);
+        twoArgumentsFunctions.put("log", (Double a, Double b)->Math.log(a)/Math.log(b));
     }
     static FunctionsList instance;
     public static FunctionsList getInstance(){
