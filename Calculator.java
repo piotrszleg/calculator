@@ -7,7 +7,7 @@ class Calculator extends JFrame implements InputReceiver {
     boolean panelsSwitch=true;
     String input="";
 
-    String interpretInput() throws ParsingException, EvaluationException {
+    String interpretInput() throws InterpreterException{
         return String.format("%.2f", Interpreter.interpret(input));
     }
 
@@ -15,7 +15,7 @@ class Calculator extends JFrame implements InputReceiver {
         display.setInput(input);
         try {
             display.setPreview(interpretInput());
-        } catch(ParsingException|EvaluationException e){
+        } catch(InterpreterException e){
             display.setPreview("");
         }
     }
@@ -37,7 +37,7 @@ class Calculator extends JFrame implements InputReceiver {
     void equalsSign(){
         try {
             input=interpretInput();
-        } catch(ParsingException|EvaluationException e) {
+        } catch(InterpreterException e) {
             input="Error";
         }
     }

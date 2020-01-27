@@ -2,7 +2,7 @@ class Keyboard extends ButtonsPanel {
     static String[][] buttonLayout={
         {"(", ")", "%", "√"},
         {"7", "8", "9", "/"},
-        {"4", "5", "6", "x"},
+        {"4", "5", "6", "×"},
         {"1", "2", "3", "-"},
         {"0", ".", "=", "+"}
     };
