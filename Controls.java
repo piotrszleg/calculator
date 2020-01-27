@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-class Controls extends Panel {
+class Controls extends JPanel {
     void addButton(String name, ActionListener onClick){
         JButton button=new JButton(name);
         button.addActionListener(onClick);

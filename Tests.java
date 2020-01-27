@@ -3,7 +3,7 @@ class Tests {
         return Math.abs(b-a)<0.001;
     }
     static void assertInterpretation(String text, double expectedResult) throws Exception {
-        double result=new Interpreter(text).interpret();
+        double result=Interpreter.interpret(text);
         assert close(result, expectedResult) 
              : String.format("\"%s\" evaluates to: %.2f, expected %.2f.", text, result, expectedResult);
     }
@@ -16,5 +16,8 @@ class Tests {
         assertInterpretation("PI", Math.PI);
         assertInterpretation("sin(PI)", Math.sin(Math.PI));
         assertInterpretation("pow(2,3)", Math.pow(2, 3));
+        assertInterpretation("5+2x2", 9.0);
+        assertInterpretation("5+2x-2", 1.0);
+        assertInterpretation("4x3-5+2x2", 11.0);
     }
 }

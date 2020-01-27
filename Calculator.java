@@ -8,7 +8,7 @@ class Calculator extends JFrame implements InputReceiver {
     String input="";
 
     String interpretInput() throws ParsingException, EvaluationException {
-        return String.format("%.2f", new Interpreter(input).interpret());
+        return String.format("%.2f", Interpreter.interpret(input));
     }
 
     void updateDisplay(){
@@ -22,13 +22,15 @@ class Calculator extends JFrame implements InputReceiver {
 
     void backspace(){
         if(input.length()>0){
-            int i;
-            for(i=input.length()-1; i>0; i--){
-                if(!Character.isAlphabetic(input.charAt(i))){
-                    break;
+            int i=input.length()-1;
+            if(Character.isLetter(input.charAt(i))){
+                while(i>=0 && Character.isLetter(input.charAt(i))){
+                    i--;
                 }
+                input=input.substring(0, i+1);
+            } else {
+                input=input.substring(0, i);
             }
-            input=input.substring(0, i);
         }
     }
 
@@ -70,6 +72,9 @@ class Calculator extends JFrame implements InputReceiver {
                 break;
             default:
                 input+=newInput;
+        }
+        if(FunctionsList.instance.isFunction(newInput)){
+            input+='(';
         }
         updateDisplay();
     }

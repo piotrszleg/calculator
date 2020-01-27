@@ -1,19 +1,21 @@
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
 class ParsingException extends Exception {}
 class EvaluationException extends Exception {}
-class IncompletedException extends Exception {
-    String completed;
-    double completedValue;
-    public IncompletedException(String completed, double completedValue){
-        this.completed=completed;
-        this.completedValue=completedValue;
-    }
-}
 
+// static interpret method should be used by external classes to interpret mathematical expressions
+// internally Interpreter class instances are used to store interpretation state
 class Interpreter {
+    final List<Character> binaryOperators=Arrays.asList(new Character[]{'x', '/', '%', '-', '+'});
     String text;
     int pointer;
 
-    Interpreter(String text){
+    static double interpret(String text) throws ParsingException, EvaluationException {
+        return new Interpreter(text).parse();
+    }
+    private Interpreter(String text){
         this.text=text;
     }
     void checkBounds() throws ParsingException {
@@ -48,15 +50,20 @@ class Interpreter {
             throw new ParsingException();
         }
     }
-    char parseBinaryOperator() throws ParsingException{
-        char[] binaryOperators={'-', '+', 'x', '/', '%'};
-        checkBounds();
-        char character=text.charAt(pointer);
+    boolean isOperator(char character){
         for(char operator : binaryOperators){
             if(operator==character){
-                pointer++;
-                return operator;
+                return true;
             }
+        }
+        return false;
+    }
+    char parseBinaryOperator() throws ParsingException{
+        checkBounds();
+        char operator=text.charAt(pointer);
+        if(isOperator(operator)){
+            pointer++;
+            return operator;
         }
         throw new ParsingException();
     }
@@ -64,7 +71,7 @@ class Interpreter {
         String name="";
         for(; pointer<text.length(); pointer++){
             char character=text.charAt(pointer);
-            if(Character.isAlphabetic(character)){
+            if(Character.isLetter(character)){
                 name+=character;
             } else {
                 break;
@@ -82,7 +89,7 @@ class Interpreter {
         for(; pointer<text.length(); pointer++){
             if(text.charAt(pointer)==')'){
                 pointer++;
-                return new Interpreter(text.substring(begin, pointer-1)).interpret();
+                return Interpreter.interpret(text.substring(begin, pointer-1));
             }
         }
         throw new ParsingException();
@@ -107,13 +114,13 @@ class Interpreter {
         pointer++;
         argumentStrings[0]=collectUntil(',');
         if(argumentStrings[0]!=null){
-            arguments[0]=new Interpreter(argumentStrings[0]).interpret();
+            arguments[0]=Interpreter.interpret(argumentStrings[0]);
         } else{
             throw new ParsingException();
         }
         argumentStrings[1]=collectUntil(')');
         if(argumentStrings[1]!=null){
-            arguments[1]=new Interpreter(argumentStrings[1]).interpret();
+            arguments[1]=Interpreter.interpret(argumentStrings[1]);
         } else{
             throw new ParsingException();
         }
@@ -132,14 +139,12 @@ class Interpreter {
         }
         throw new ParsingException();
     }
-    double parseBinary(double left) throws ParsingException, EvaluationException {
-        char operator=parseBinaryOperator();
-        double right=interpret();
+    double evaluateBinary(double left, double right, char operator) throws EvaluationException {
         switch(operator){
             case '+':
                 return left+right;
             case '-':
-                return left+right;
+                return left-right;
             case 'x':
                 return left*right;
             case '/':
@@ -154,6 +159,53 @@ class Interpreter {
                 throw new EvaluationException();
         }
     }
+    class Pair<L, R> {
+        public L left;
+        public R right;
+        public Pair(L left, R right){
+            this.left=left;
+            this.right=right;
+        }
+    }
+    Pair<Character, Integer> findHighestOperator() throws ParsingException {
+        Pair<Character, Integer> highestOperator=null;
+        Comparator<Character> operatorsComparator=
+            (Character a, Character b)->binaryOperators.indexOf(a)-binaryOperators.indexOf(b);
+        
+        // last binary is used to skip over prefixes
+        // for example in "2x-2" '-' will be skipped over
+        boolean lastBinary=false;
+        for(pointer=0; pointer<text.length(); pointer++){
+            char character=text.charAt(pointer);
+            if(isOperator(character)){
+                if(!lastBinary){
+                    if(highestOperator==null 
+                    || operatorsComparator.compare(character, highestOperator.left)>0){
+                        highestOperator=new Pair<Character, Integer>(character, pointer);
+                    }
+                    lastBinary=true;
+                }
+            } else {
+                // skip over expressions in parentheses
+                if(character=='('){
+                    collectUntil(')');
+                }
+                lastBinary=false;
+            }
+        }
+        if(highestOperator==null){
+            throw new ParsingException();
+        }
+        return highestOperator;
+    }
+    double parseBinary(double left) throws ParsingException, EvaluationException {
+        Pair<Character,Integer> highestOperator=findHighestOperator();
+        String toTheLeft=text.substring(0, highestOperator.right);
+        String toTheRight=text.substring(highestOperator.right+1, text.length());
+        return evaluateBinary(Interpreter.interpret(toTheLeft),
+                              Interpreter.interpret(toTheRight), 
+                              highestOperator.left);
+    }
     double parseIfBinary(double left) throws ParsingException, EvaluationException {
         if(pointer<text.length()){
             return parseBinary(left);
@@ -161,7 +213,7 @@ class Interpreter {
             return left;
         }
     }
-    double interpret() throws ParsingException, EvaluationException {
+    double parse() throws ParsingException, EvaluationException {
         if(pointer>=text.length()){
             throw new ParsingException();    
         }
@@ -178,10 +230,10 @@ class Interpreter {
             for(; pointer<text.length(); pointer++){
                 if(text.charAt(pointer)==')'){
                     pointer++;
-                    return parseIfBinary(new Interpreter(text.substring(begin+1, pointer-1)).interpret());
+                    return parseIfBinary(Interpreter.interpret(text.substring(begin+1, pointer-1)));
                 }
             }
-        } else if(Character.isAlphabetic(text.charAt(pointer))){
+        } else if(Character.isLetter(text.charAt(pointer))){
             return parseIfBinary(parseFunction());
         }
         throw new ParsingException();

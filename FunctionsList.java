@@ -29,6 +29,10 @@ public class FunctionsList {
         oneArgumentFunctions.put("ln", Math::log);
         twoArgumentsFunctions.put("log", (Double a, Double b)->Math.log(a)/Math.log(b));
     }
+    public boolean isFunction(String name){
+        return oneArgumentFunctions.containsKey(name) 
+            || twoArgumentsFunctions.containsKey(name);
+    }
     static FunctionsList instance;
     public static FunctionsList getInstance(){
         if(instance==null){

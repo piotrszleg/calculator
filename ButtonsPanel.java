@@ -7,7 +7,7 @@ interface InputReceiver {
     void receiveInput(String input);
 }
 
-class ButtonsPanel extends Panel {
+class ButtonsPanel extends JPanel {
     InputReceiver inputReceiver;
     void addButton(String name){
         JButton button=new JButton(name);
