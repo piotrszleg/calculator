@@ -155,19 +155,19 @@ class Interpreter {
         Pair<Character, Integer> highestOperator=null;
         Comparator<Character> operatorsComparator=
             (Character a, Character b)->binaryOperators.indexOf(a)-binaryOperators.indexOf(b);
-        
-        // lastWasOperator is used to skip over prefixes
+        int previousPointer=pointer;
+        // skip is used to skip over prefixes
         // for example in "2×-2" '-' will be skipped over
-        boolean lastWasOperator=false;
-        for(pointer=0; pointer<text.length(); pointer++){
+        boolean skip=false;
+        for(; pointer<text.length(); pointer++){
             char character=text.charAt(pointer);
             if(isOperator(character)){
-                if(!lastWasOperator){
+                if(!skip && pointer!=0){
                     if(highestOperator==null 
                     || operatorsComparator.compare(character, highestOperator.getLeft())>0){
                         highestOperator=new Pair<Character, Integer>(character, pointer);
                     }
-                    lastWasOperator=true;
+                    skip=true;
                 }
             } else {
                 // skip over expressions in parentheses
@@ -175,12 +175,10 @@ class Interpreter {
                     collectUntil(')');
                     pointer--;
                 }
-                lastWasOperator=false;
+                skip=false;
             }
         }
-        if(highestOperator==null){
-            throw new ParsingException();
-        }
+        pointer=previousPointer;
         return highestOperator;
     }
     double interpretOrIdentityValue(String text, char operator){
@@ -197,38 +195,33 @@ class Interpreter {
             return 0;
         }
     }
-    double parseBinary(double left) throws InterpreterException {
-        Pair<Character,Integer> highestOperator=findHighestOperator();
+    double parseBinary(Pair<Character,Integer> highestOperator) throws InterpreterException {
         String toTheLeft=text.substring(0, highestOperator.getRight());
         String toTheRight=text.substring(highestOperator.getRight()+1, text.length());
         return evaluateBinary(interpretOrIdentityValue(toTheLeft, highestOperator.getLeft()),
                               interpretOrIdentityValue(toTheRight, highestOperator.getLeft()),
                               highestOperator.getLeft());
     }
-    double parseIfBinary(double left) throws InterpreterException {
-        if(pointer<text.length()){
-            return parseBinary(left);
-        } else {
-            return left;
-        }
-    }
     double parse() throws InterpreterException {
         if(pointer>=text.length()){
             throw new UnfinishedException();  
         }
-        if(Character.isDigit(text.charAt(pointer))){
-            return parseIfBinary(parseNumber());
+        Pair<Character,Integer> highestOperator=findHighestOperator();
+        if(highestOperator!=null){
+            return parseBinary(highestOperator);
+        } else if(Character.isDigit(text.charAt(pointer))){
+            return parseNumber();
         } else if(text.charAt(pointer)=='-'){
             pointer++;
-            return parseIfBinary(-parseNumber());
+            return -parse();
         } else if(text.charAt(pointer)=='√'){
             pointer++;
-            return parseIfBinary(Math.sqrt(parseNumber()));
+            return Math.sqrt(parse());
         } else if(text.charAt(pointer)=='('){
             pointer++;
-            return parseIfBinary(Interpreter.interpret(collectUntil(')')));
+            return Interpreter.interpret(collectUntil(')'));
         } else if(Character.isLetter(text.charAt(pointer))){
-            return parseIfBinary(parseFunction());
+            return parseFunction();
         }
         throw new UnfinishedException();
     }
