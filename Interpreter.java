@@ -10,7 +10,7 @@ class UnfinishedException extends InterpreterException {}
 // static interpret method should be used by external classes to interpret mathematical expressions
 // internally Interpreter class instances are used to store interpretation state
 class Interpreter {
-    static final List<Character> binaryOperators=Arrays.asList(new Character[]{'×', '/', '%', '-', '+'});
+    static final List<Character> binaryOperators=Arrays.asList(new Character[]{'×', '÷', '%', '-', '+'});
     String text;
     int pointer;
 
@@ -20,12 +20,12 @@ class Interpreter {
     private Interpreter(String text){
         this.text=text;
     }
-    void checkBounds() throws ParsingException {
+    void checkBounds() throws UnfinishedException {
         if(pointer>=text.length()){
-            throw new ParsingException();
+            throw new UnfinishedException();
         }
     }
-    double parseNumber() throws UnfinishedException, ParsingException {
+    double parseNumber() throws UnfinishedException {
         boolean valueParsed=false;
         double value=0.0;
         checkBounds();
@@ -53,21 +53,17 @@ class Interpreter {
         }
     }
     boolean isOperator(char character){
-        for(char operator : binaryOperators){
-            if(operator==character){
-                return true;
-            }
-        }
-        return false;
+        return binaryOperators.contains(character);
     }
-    char parseBinaryOperator() throws ParsingException{
+    char parseBinaryOperator() throws ParsingException, UnfinishedException {
         checkBounds();
         char operator=text.charAt(pointer);
         if(isOperator(operator)){
             pointer++;
             return operator;
+        } else {
+            throw new ParsingException();
         }
-        throw new ParsingException();
     }
     String parseName() {
         String name="";
@@ -81,10 +77,10 @@ class Interpreter {
         }
         return name;
     }
-    void consume(char character) throws ParsingException {
+    void consume(char character) throws UnfinishedException {
         checkBounds();
         if(text.charAt(pointer)!='('){
-            throw new ParsingException();
+            throw new UnfinishedException();
         }
         pointer++;
     }
@@ -128,7 +124,7 @@ class Interpreter {
             case '-':
                 return 0;
             case '×':
-            case '/':
+            case '÷':
             case '%':
                 return 1;
             default:
@@ -143,7 +139,7 @@ class Interpreter {
                 return left-right;
             case '×':
                 return left*right;
-            case '/':
+            case '÷':
                 return left/right;
             case '%':
                 if(Math.floor(left)!=left || Math.floor(right)!=right){

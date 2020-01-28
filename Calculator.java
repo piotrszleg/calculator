@@ -1,6 +1,7 @@
 import javax.swing.*;
+import java.awt.event.*;
 
-class Calculator extends JFrame implements InputReceiver {
+class Calculator extends JFrame implements InputReceiver, KeyListener {
     Display display;
     Keyboard keyboard;
     FunctionsPanel functionsPanel;
@@ -77,10 +78,51 @@ class Calculator extends JFrame implements InputReceiver {
             input+='(';
         }
         updateDisplay();
+        requestFocusInWindow();
+    }
+    public void keyTyped(KeyEvent e) {
+        char character=e.getKeyChar();
+        switch(character) {
+            case '*':
+                input+='×';
+                break;
+            case '/':
+                input+='÷';
+                break;
+            case '+':
+            case '-':
+            case ',':
+            case '(':
+            case ')':
+            case '.':
+                input+=character;
+                break;
+            case '=':
+                equalsSign();
+            default:
+                if(Character.isDigit(character) || Character.isLetter(character)){
+                    input+=character;
+                }
+        }
+        updateDisplay();
+    }
+    public void keyPressed(KeyEvent e) {
+        // backspace can't be red in keyTyped event
+        if(e.getKeyCode()==KeyEvent.VK_BACK_SPACE){
+            backspace();
+        }
+        updateDisplay();
+    }
+    public void keyReleased(KeyEvent e) {}
+
+    @Override
+    public boolean isFocusable(){
+        return true;
     }
 
     public Calculator() {
         super("Calculator");
+        addKeyListener(this);
         setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
         display=new Display();
         add(display);

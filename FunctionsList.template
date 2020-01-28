@@ -13,6 +13,7 @@ public class FunctionsList {
 %s
         oneArgumentFunctions.put("ln", Math::log);
         twoArgumentsFunctions.put("log", (Double a, Double b)->Math.log(a)/Math.log(b));
+        twoArgumentsFunctions.put("atanxy", Math::atan2);
     }
     public boolean isFunction(String name){
         return oneArgumentFunctions.containsKey(name) 

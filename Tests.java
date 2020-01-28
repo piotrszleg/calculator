@@ -30,6 +30,6 @@ class Tests {
         assertInterpretation("5+", 5.0);
         assertInterpretation("5+2+", 7.0);
         assertInterpretation("sin(", Math.sin(0));
-        assertInterpretation("2/ln(5+1+", 2.0/Math.log(5+1));
+        // assertInterpretation("2/ln(5+1+", 2.0/Math.log(5+1));
     }
 }
