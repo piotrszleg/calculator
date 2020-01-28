@@ -158,6 +158,7 @@ class Interpreter {
         int previousPointer=pointer;
         // skip is used to skip over prefixes
         // for example in "2×-2" '-' will be skipped over
+        // also "--2" is correctly interpreted as "-(-2)" instead of "(-)-(2)"
         boolean skip=false;
         for(; pointer<text.length(); pointer++){
             char character=text.charAt(pointer);
@@ -167,8 +168,8 @@ class Interpreter {
                     || operatorsComparator.compare(character, highestOperator.getLeft())>0){
                         highestOperator=new Pair<Character, Integer>(character, pointer);
                     }
-                    skip=true;
                 }
+                skip=true;
             } else {
                 // skip over expressions in parentheses
                 if(character=='('){

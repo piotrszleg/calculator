@@ -31,5 +31,8 @@ class Tests {
         assertInterpretation("5+2+", 7.0);
         assertInterpretation("sin(", Math.sin(0));
         // assertInterpretation("2/ln(5+1+", 2.0/Math.log(5+1));
+        // multiple prefixes in a row
+        assertInterpretation("--3", 3.0);
+        assertInterpretation("-√9", -3.0);
     }
 }
