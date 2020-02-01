@@ -107,9 +107,12 @@ class Calculator extends JFrame implements InputReceiver, KeyListener {
         updateDisplay();
     }
     public void keyPressed(KeyEvent e) {
-        // backspace can't be red in keyTyped event
+        // getKeyCode doesn't work in keyTyped event
         if(e.getKeyCode()==KeyEvent.VK_BACK_SPACE){
             backspace();
+        }
+        if(e.getKeyCode()==KeyEvent.VK_ENTER){
+            equalsSign();
         }
         updateDisplay();
     }
