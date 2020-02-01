@@ -79,7 +79,7 @@ class Interpreter {
     }
     void consume(char character) throws UnfinishedException {
         checkBounds();
-        if(text.charAt(pointer)!='('){
+        if(text.charAt(pointer)!=character){
             throw new UnfinishedException();
         }
         pointer++;
