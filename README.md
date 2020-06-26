@@ -1,3 +1,5 @@
+# Java Calculator
+
 ![](https://i.ibb.co/MsCFLQG/calculator.gif)
 
 # Features
