@@ -1,3 +1,5 @@
+![](https://i.ibb.co/MsCFLQG/calculator.gif)
+
 # Features
 
 - GUI with two panels: standard calculator front and functions and constants list
